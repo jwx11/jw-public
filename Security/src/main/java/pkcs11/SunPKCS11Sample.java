@@ -9,7 +9,7 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  */
-package jw.pkcs11;
+package pkcs11;
 
 import java.security.KeyStore;
 import java.security.Provider;
