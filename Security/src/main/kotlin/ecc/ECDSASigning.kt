@@ -16,17 +16,14 @@ import org.bouncycastle.jce.ECNamedCurveTable
 import org.bouncycastle.util.encoders.Hex
 import java.security.*
 
-private val SIGN_MESSAGE = ("There is no dark side \n" +
-        "of the moon really. \n" +
-        "Matter of fact \n" +
-        "it's all dark.").toByteArray()
-
 private const val CURVE_P256 = "p-256"
 private const val CURVE_P384 = "p-384"
 private const val CURVE_ED25519 = "curve25519"
 
 private const val SIGN_ALG_SHA256_ECDSA = "SHA256withECDSA"
 private const val SIGN_ALG_SHA512_ECDSA = "SHA512withECDSA"
+
+private val SIGN_MESSAGE = "There is no dark side of the moon really. Matter of fact it's all dark.".toByteArray()
 
 /**
  * ECC key generation and ECDSA sign/verify sample with BC provider and default provider (SunEC)
