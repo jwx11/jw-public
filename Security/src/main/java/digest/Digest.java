@@ -1,27 +1,54 @@
 package digest;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
+import java.util.Collection;
 
 public class Digest {
 
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
-            System.err.println("Usage : java digest.Digest algorithm filename");
+            System.err.println("Usage : java digest.digest.Digest algorithm filename");
             System.exit(1);
         }
-        String algorithm = toAlgorithmName(args[0]);
+        String algorithm = toAlgorithm(args[0]);
         String filename = args[1];
 
         File file = new File(filename);
-        if (!file.exists()) {
-            System.err.println("[ERROR] File not found : " + filename);
-            System.exit(1);
+        if (filename.indexOf("*") > -1 || filename.indexOf("?") > -1) {
+            processWildCardFile(algorithm, file);
+        } else {
+            processFile(algorithm, file);
         }
+    }
 
+    private static void processFile(String algorithm, File file) throws  Exception {
+        if (!file.exists()) {
+            System.err.println("[ERROR] File not found : " + file.getAbsolutePath());
+            System.exit(2);
+        } else if (!file.isFile()) {
+            System.err.println("[ERROR] Path is not file : " + file.getAbsolutePath());
+            System.exit(3);
+        }
         process(algorithm, file);
+    }
+
+    private static void processWildCardFile(String algorithm, File file) throws Exception {
+        File parent = file.getParentFile();
+        if (parent == null) parent = new File(".");
+        Collection<File> list = FileUtils.listFiles(parent, new WildcardFileFilter(file.getName()), null);
+        list.forEach(f->{
+            try {
+                process(algorithm, f);
+            } catch (Exception e) {
+                System.out.println("[ERROR] file to compute digest for : " + f.getAbsolutePath());
+            }
+        });
     }
 
     private static void process(String algorithm, File file) throws Exception {
@@ -38,7 +65,7 @@ public class Digest {
         return md.digest();
     }
 
-    private static String toAlgorithmName(String algorithm) {
+    private static String toAlgorithm(String algorithm) {
         String alg = algorithm.toUpperCase();
         if ("SHA256".equals(algorithm)) {
             alg = "SHA-256";
@@ -58,8 +85,7 @@ public class Digest {
         StringBuilder builder = new StringBuilder(data.length * 2);
         for (byte b : data) {
             int v = b & 0xff;
-            builder.append(HEX_CHARS[v >>> 4]);
-            builder.append(HEX_CHARS[v & 0x0f]);
+            builder.append(HEX_CHARS[v >>> 4]).append(HEX_CHARS[v & 0x0f]);
         }
         return builder.toString();
     }
