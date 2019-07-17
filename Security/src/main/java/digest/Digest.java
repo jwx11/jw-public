@@ -16,8 +16,14 @@ public class Digest {
             System.err.println("Usage : java digest.digest.Digest algorithm filename");
             System.exit(1);
         }
+
         String algorithm = toAlgorithm(args[0]);
-        String filename = args[1];
+        String filename = args[1].trim();
+
+        if (algorithm.length() == 0 || filename.length() == 0) {
+            System.err.println("Usage : java digest.digest.Digest algorithm filename");
+            System.exit(1);
+        }
 
         File file = new File(filename);
         if (filename.indexOf("*") > -1 || filename.indexOf("?") > -1) {
@@ -66,7 +72,7 @@ public class Digest {
     }
 
     private static String toAlgorithm(String algorithm) {
-        String alg = algorithm.toUpperCase();
+        String alg = algorithm.trim().toUpperCase();
         if ("SHA256".equals(algorithm)) {
             alg = "SHA-256";
         } else if ("SHA512".equals(algorithm)) {
